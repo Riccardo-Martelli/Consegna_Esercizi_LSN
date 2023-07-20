@@ -1,0 +1,17 @@
+3.00
+50
+1.0
+0.02
+1
+20
+100000
+0
+
+  ReadInput >> temp;
+  ReadInput >> nspin;
+  ReadInput >> J;
+  ReadInput >> h;
+  ReadInput >> metro;
+  ReadInput >> nblk;
+  ReadInput >> nstep;
+  ReadInput >> mix;// se=1, legge da config.dat
