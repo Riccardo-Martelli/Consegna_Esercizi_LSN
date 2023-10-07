@@ -1,23 +1,3 @@
- sed -i '8s/.*/1/' input.gas
- sed -i '8s/.*/1/' input.liquid
- sed -i '8s/.*/1/' input.solid
-
- sed -i '9s/.*/30000/' input.gas
- sed -i '9s/.*/30000/' input.liquid
- sed -i '9s/.*/30000/' input.solid
-
- ./execute.sh
- 
- ./over.exe
-
- cp equlibration_temp.dat temp_equilibration.dat
-
- sed -i '8s/.*/60/' input.gas
- sed -i '8s/.*/60/' input.liquid
- sed -i '8s/.*/60/' input.solid
-
- sed -i '9s/.*/2000/' input.gas
- sed -i '9s/.*/2000/' input.liquid
- sed -i '9s/.*/2000/' input.solid
-
- ./execute.sh
+rm equlibration_temp.dat output_etot.dat output_press.dat output_temp.dat output_ekin.dat output_epot.dat
+touch equlibration_temp.dat output_etot.dat output_press.dat output_temp.dat output_ekin.dat output_epot.dat
+./NVE_NVT.exe input.gas && ./NVE_NVT.exe input.liquid && ./NVE_NVT.exe input.solid

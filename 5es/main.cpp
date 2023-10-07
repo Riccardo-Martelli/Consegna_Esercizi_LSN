@@ -32,7 +32,7 @@ double minimo(double A,double B){
 
 }
 
-void exec(bool);
+/*====================================MAIN======================================*/
 
 int main(int argc, char *argv[]){
 
@@ -60,50 +60,64 @@ int p1,p2;
       input.close();
    } else cerr << "PROBLEM: Unable to open seed.in" << endl;
 
+ifstream ReadInput;
 
- exec(false);
- exec(true);
+ReadInput.open("Input.in");
 
-return 0;
+bool gaus;
+ReadInput >> gaus;  
+    
+ReadInput.close();
+
+string sum = "avg_psi_one_gaus.txt";
+string point = "points_psi_one_gaus.txt";
+string point2 = "points_psi_two_gaus.txt";
+string sum2= "avg_psi_two_gaus.txt";
+string equ = "gaus_equilibration.txt";
+
+cout << "gaus=" << gaus <<endl;
+
+if(gaus == false){
+
+sum = "avg_psi_one_unif.txt";
+point = "points_psi_one_unif.txt";
+
+point2 ="points_psi_two_unif.txt";
+sum2 = "avg_psi_two_unif.txt";
+
+equ = "unif_equilibration.txt";
+
 }
 
 
-
-/*============================================================*/
-
-
-
-void exec(bool gaus = true){
-
-if (gaus) cout << "Simulazione con Gauss" << endl;
-else cout << " Simulazione con uniforme " << endl;
-
-Random rnd;
-
-ofstream write;
 ofstream write2;
 ofstream write3;
-ofstream write4;
 ofstream sums;
+ofstream sums2;
+ofstream far;
+ofstream far2;
+ofstream equil;
 
-write.open("first.txt",ios::app);
-write2.open("second.txt",ios::app);    
-write3.open("third.txt",ios::app);
-write4.open("first2.txt",ios::app);
-    
-sums.open("sums.txt");
+write2.open(point);    
+write3.open(point2);
 
     
-write << "sum,mean,err" << endl;
-write4 << "sum,mean,err" << endl;
+sums.open(sum);
+sums2.open(sum2);
+equil.open(equ);
+
+    
+sums << "sum,mean,err" << endl;
+sums2 << "sum,mean,err" << endl;
+equil << "sum,mean,err" << endl;
 write2 << "x,y,z" << endl;
 write3 << "x,y,z" << endl;
-sums << "sums,mean,err" << endl;
     
-int steps= pow(10,8);
+int steps= pow(10,5);
 int B = 100;
 int F = steps/B;
-    
+
+
 double sumr = 0.0;
 double mean_prog = 0.0;
 double mean_prog2 = 0.0; 
@@ -122,8 +136,8 @@ double Tz = 0.0;
 
 int count = 0;
     
-int eq = 4.0*pow(10,5);//iterations for equilibration
-int eq_blcks = 4.0*pow(10,5);
+int eq = 5.0*pow(10,4);//iterations for equilibration
+int eq_blcks = 5.0*pow(10,4);
 int rateo = eq/eq_blcks; 
 double largh = 0.0;
 double r ;
@@ -180,27 +194,28 @@ for (int j=0; j< eq_blcks;j++){
     mean_prog += sumr;
     mean_prog2 += sumr*sumr; 
 
-    sums << sumr << "," << mean_prog/(j+1) << "," << error(mean_prog/(j+1),mean_prog2/(j+1),j)  << endl;
-
-   
+    equil << sumr << "," << mean_prog/(j+1) << "," << error(mean_prog/(j+1),mean_prog2/(j+1),j)  << endl;
 }
- 
- cout << ".--------------------------------.  " << endl;
- cout << "| Equilibration psi_1 terminated | " << endl;
- cout << "'--------------------------------'  " << endl;
- cout << endl;
 
 
-sumr = 0.0;
-mean_prog=0.0;
-mean_prog2=0.0;
+cout << endl;
+cout << ".----------------------------. " << endl;
+cout << "| End equilibration of psi_1 | " << endl;
+cout << "'----------------------------' " << endl;
+cout << endl;
 
-for (int j= 0; j < B; j++){ 
-    
-    count = 0;
-    
-    for(int i = 0; i< F;i++){
+//####################################psi_{1,0,0}##########################################################
+
+sumr =0.0;
+mean_prog = 0.0;
+mean_prog2 = 0.0; 
+
+for (int j=0; j< B;j++){
         
+   count = 0;
+
+   for(int i =0; i< F;i++){
+
 	if(!gaus){
         largh =1.225;
         
@@ -227,30 +242,28 @@ for (int j= 0; j < B; j++){
           x = Tx;
           y = Ty;
           z = Tz;
+          write2 << x << "," << y << "," << z << endl;
 
           count ++;
-          
-       if(i%100 == 0)//riduco il numero di punti presi altrimenti sono troppi
-              write2 << x << "," << y << "," << z << endl;
              
         }
-          sumr += sqrt(x*x+y*y+z*z);
-    
-    }
-    
-    sumr /= double(F);
+        sumr += sqrt(x*x + y*y + z*z);
+	
+       } 
+       
+    loading(B,j);
+
+    sumr = sumr/double(F);
     mean_prog += sumr;
     mean_prog2 += sumr*sumr; 
 
-    cout << " acc_rate batch "<< j+1 <<": " << ((double)count/F)*100. << "%" << endl;
-    write  << sumr << "," << mean_prog/(j+1) << "," << error(mean_prog/(j+1),mean_prog2/(j+1),j)  << endl;
-    
-    //sumr = 0.0;
-    
+    sums << sumr << "," << mean_prog/(j+1) << "," << error(mean_prog/(j+1),mean_prog2/(j+1),j)  << endl;
 }
 
-    //####################################psi_{2,1,0}##########################################################
-    
+
+
+//####################################psi_{2,1,0}##########################################################
+
  sumr = 0.0;
  mean_prog= 0.0;
  mean_prog2 = 0.0;
@@ -262,71 +275,13 @@ for (int j= 0; j < B; j++){
  x = x0;
  y = y0;
  z = z0;
-
-cout << ".------------------------.  " << endl;
-cout << "| Equilibration of psi_2 | " << endl;
-cout << "'------------------------'  " << endl;
-cout << endl;
-
-for (int j=0; j< eq;j++){
-        count = 0;
-
-
-    
-	if(!gaus){
-        double largh = 2.85;
-        
-        Tx =  x + rnd.Rannyu( -largh, largh);
-        Ty =  y + rnd.Rannyu( -largh, largh);
-        Tz =  z + rnd.Rannyu( -largh, largh);
-        
-        }
-        else if(gaus){
-        largh = 1.8;         	
-	
-        Tx =  x + rnd.Gauss(0.0,largh);
-        Ty =  y + rnd.Gauss(0.0,largh);
-        Tz =  z + rnd.Gauss(0.0,largh);
-	
-	}
-	
-
-		//double A = min(1., psi2(Tx,Ty,Tz)/psi2(x,y,z));
-        double r = rnd.Rannyu(0.0,1.0);
-	double T = psi2(Tx,Ty,Tz)/psi2(x,y,z);
-	double A = minimo(1.0,T);
-
-        if( r < A ){
-
-          x = Tx;
-          y = Ty;
-          z = Tz;
-
-          count ++;
-             
-        }
-        
-          sumr += sqrt(x*x+y*y+z*z);
-	  loading(eq,j);
-
-}
  
- cout << ".--------------------------------.  " << endl;
- cout << "| Equilibration psi_2 terminated | " << endl;
- cout << "'--------------------------------'  " << endl;
- cout << endl;
-
-sumr = 0.0;
  for (int j= 0; j < B; j++){
 
 
     int count = 0;
      
     for(int i = 0; i< F;i++){
-
-        Tx =  x + rnd.Rannyu( -largh, largh);
-        Ty =  y + rnd.Rannyu( -largh, largh);
-        Tz =  z + rnd.Rannyu( -largh, largh);
 
 	if(!gaus){
         largh =2.85;
@@ -355,8 +310,9 @@ sumr = 0.0;
           z = Tz;
 
           count ++;
-          if(i%100 == 0)//riduco il numero di punti presi altrimenti sono troppi
-              write3 << x << "," << y << "," << z << endl;
+        
+          write3 << x << "," << y << "," << z << endl;
+          
               }
           sumr += sqrt(x*x+y*y+z*z);
         }
@@ -368,15 +324,133 @@ sumr = 0.0;
     
     cout << " acc_rate_2 batch "<< j+1 <<": " << ((double)count/F)*100. << "%" << endl;
 
-  write4 << sumr << "," << mean_prog/(j+1) << "," << error(mean_prog/(j+1),mean_prog2/(j+1),j) << endl;
+  sums2 << sumr << "," << mean_prog/(j+1) << "," << error(mean_prog/(j+1),mean_prog2/(j+1),j) << endl;
 
     }
+
+
+/*=========================== far from origin  =================================*/
+
+far.open("points_psi_one_far.txt");    
+far2.open("points_psi_two_far.txt");
+
+far << "x,y,z" << endl;
+far2 << "x,y,z" << endl;
+
+x0 = 20.;
+y0 = 0.;
+z0 = 0.;
+
+x = x0;
+y = y0;
+z = z0;
    
-write.close();  
+/*=========================== psi 1  =================================*/
+    
+for (int j=0; j< B;j++){
+        
+   count = 0;
+
+   for(int i =0; i< F;i++){
+
+	if(!gaus){
+        largh =1.225;
+        
+        Tx =  x + rnd.Rannyu( -largh, largh);
+        Ty =  y + rnd.Rannyu( -largh, largh);
+        Tz =  z + rnd.Rannyu( -largh, largh);
+        
+        }
+        else if(gaus){
+        largh = 0.75;         	
+	
+        Tx =  x + rnd.Gauss(0.0,largh);
+        Ty =  y + rnd.Gauss(0.0,largh);
+        Tz =  z + rnd.Gauss(0.0,largh);
+	
+	}
+	
+	double T = psi1(Tx,Ty,Tz)/psi1(x,y,z);
+	double A = minimo(1.0,T);
+        double r = rnd.Rannyu(0.0,1.0);
+
+        if( r < A ){
+
+          x = Tx;
+          y = Ty;
+          z = Tz;
+          far << x << "," << y << "," << z << endl;
+
+          count ++;
+             
+        }
+       } 
+}
+
+    
+ x0 = 50.;
+ y0 = 0.;
+ z0 = 0.;
+    
+ x = x0;
+ y = y0;
+ z = z0;
+ 
+ /*=========================== psi 2  =================================*/
+ 
+ for (int j= 0; j < B; j++){
+
+
+    int count = 0;
+     
+    for(int i = 0; i< F;i++){
+
+	if(!gaus){
+        largh =2.85;
+        
+        Tx =  x + rnd.Rannyu( -largh, largh);
+        Ty =  y + rnd.Rannyu( -largh, largh);
+        Tz =  z + rnd.Rannyu( -largh, largh);
+        
+        }
+        else if(gaus){
+        largh = 1.8;         	
+	
+        Tx =  x + rnd.Gauss(0.0,largh);
+        Ty =  y + rnd.Gauss(0.0,largh);
+        Tz =  z + rnd.Gauss(0.0,largh);
+	
+	}
+
+        double A = min(1., psi2(Tx,Ty,Tz)/psi2(x,y,z));
+        double r = rnd.Rannyu(0.0,1.0);
+
+        if( r < A ){
+
+          x = Tx;
+          y = Ty;
+          z = Tz;
+
+          count ++;
+        
+          far2 << x << "," << y << "," << z << endl;
+          
+              }
+        }
+        
+    
+
+    }
+
+
+
 write2.close();  
 write3.close();    
-write4.close();
 sums.close();
+sums2.close();
+equil.close();
 
 
+
+return 0;
 }
