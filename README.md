@@ -1,7 +1,5 @@
 # Numerical Simulation Exercises
 
-# Monte Carlo-Based AI and Optimization Algorithms in C++
-
 ## Overview
 This repository contains a series of **12 projects** focused on **assimilation techniques** using **Monte Carlo methods**, including:
 - **Simulated Annealing**
