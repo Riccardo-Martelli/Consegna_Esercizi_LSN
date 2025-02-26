@@ -72,8 +72,5 @@ Another exercise applies **Monte Carlo methods** to **financial modeling**. Exer
 ### Real-World Applications: Derivative Pricing
 Monte Carlo methods are widely used in **financial engineering** to price complex financial derivatives. The **Plain Vanilla Option Pricing** exercise demonstrates the practical application of Monte Carlo simulations in **quantitative finance**, where asset prices follow stochastic processes. By simulating a large number of potential future asset price paths, these methods provide robust estimations of option prices under uncertainty. The approach can be extended to price more complex derivatives such as **Asian options, barrier options, and American-style derivatives**, making Monte Carlo simulations a crucial tool in risk management and trading strategies.
 
-## Contributions
-Contributions and suggestions are welcome! Feel free to open an issue or submit a pull request.
-
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
