@@ -1,4 +1,4 @@
-# Consegna_Esercizi_LSN
+# Numerical Simulation Exercises
 
 Most of the exercises can be compiled using ./execute, otherwise make && ./main.cpp
 
